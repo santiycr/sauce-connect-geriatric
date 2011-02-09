@@ -1,4 +1,6 @@
-THIS IS PROBABLY NOT THE REPOSITORY YOU WANT.
+THIS IS PROBABLY NOT THE REPOSITORY YOU WANT
+=============
+
 It's the old version of sauce connect, kept around to help support the customers
 who are still using it.  If you're new to sauce connect, don't use this.  Follow
 instructions from saucelabs.com to get the current sauce connect.
