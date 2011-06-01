@@ -46,7 +46,7 @@ except ImportError:
     class InterruptedException(Exception): pass
 
 NAME = "sauce_connect"
-RELEASE = 25
+RELEASE = 26
 DISPLAY_VERSION = "%s release %s" % (NAME, RELEASE)
 PRODUCT_NAME = u"Sauce Connect"
 VERSIONS_URL = "http://saucelabs.com/versions.json"
@@ -718,9 +718,9 @@ Performance tip:
              " By default, we use the same ports as the HOST."
              " If you know for sure _all_ your tests use something like"
              " http://site.test:8080/ then set this 8080.")
-    og.add_option("--dont-halt", action="store_false", default=True,
+    og.add_option("--ignore-host-health", action="store_false", default=True,
                   dest="halt_on_fail",
-                  help="Don't halt the tunnel when the health check fails")
+                  help="Don't stop Sauce Connect when the health check fails")
     og.add_option("--logfile", default=logfile,
           help="Path of the logfile to write to. [%default]")
     og.add_option("--readyfile",
