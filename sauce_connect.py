@@ -434,8 +434,6 @@ class ReverseSSH(object):
         else:
             self.stdout_f = open(os.devnull, 'wb')
         self.stderr_f = tempfile.TemporaryFile()
-        print self.stdout_f
-        print self.stderr_f
         self.proc = subprocess.Popen(
             cmd, shell=True, stdout=self.stdout_f, stderr=self.stderr_f)
         self.tunnel.reverse_ssh = self  # BUG: circular ref
@@ -492,12 +490,11 @@ class ReverseSSH(object):
                 logger.debug("ReverseSSH stderr was:\n%s\n" % reverse_ssh_stderr)
 
         if not self.stdout_f.closed:
-            self.stdout_f.seek(0)
-            reverse_ssh_stdout = self.stdout_f.read().strip()
-            self.stdout_f.close()
-
             if self.debug:
+                self.stdout_f.seek(0)
+                reverse_ssh_stdout = self.stdout_f.read().strip()
                 logger.debug("ReverseSSH stdout was:\n%s\n" % reverse_ssh_stdout)
+            self.stdout_f.close()
 
     def _rm_readyfile(self):
         if self.readyfile and os.path.exists(self.readyfile):
