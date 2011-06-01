@@ -1,0 +1,6 @@
+We have made an attempt to have as few dependencies as possible. However, if
+you are on Linux or BSD, you may need to install the Expect application. On
+Ubuntu, you can do this with:
+
+    sudo aptitude install expect
+

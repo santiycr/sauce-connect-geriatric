@@ -1,0 +1,100 @@
+2011-01-17	1.0-r25  Sauce Labs <help@saucelabs.com>
+
+    * Fix REST auth error for accounts with long usernames.
+
+2011-01-10	1.0-r24  Sauce Labs <help@saucelabs.com>
+
+    * Fix Python 2.5 incompatibility.
+
+2011-01-04  1.0-r23  Sauce Labs <help@saucelabs.com>
+
+    * Minor enhancements.
+
+2010-12-20  1.0-r22  Sauce Labs <help@saucelabs.com>
+
+    * Support using an HTTP/HTTPS proxy for REST API connections.
+
+2010-12-15  1.0-r21  Sauce Labs <help@saucelabs.com>
+
+    * Prevent failure due to a corrupt known_hosts file.
+    * Ignore OpenSSH config files by default (override with --use-ssh-config).
+
+2010-12-06  1.0-r20  Sauce Labs <help@saucelabs.com>
+
+    * Check requested domains are usable.
+    * Wait a bit between SSH restarts to avoid failed port forwarding.
+
+2010-11-18  1.0-r19  Sauce Labs <help@saucelabs.com>
+
+    * Check Python version at startup.
+    * More metadata and show the tunnel ID to aid in debugging.
+
+2010-11-04  1.0-r18  Sauce Labs <help@saucelabs.com>
+
+    * Latency logging and warn about high latency connections.
+    * More aggresive and safer cleanup on exit.
+
+2010-09-27  1.0-r17  Sauce Labs <help@saucelabs.com>
+
+    * Fixed possible traceback during .ssh file checks.
+    * Fixed bug in traceback handler.
+
+2010-09-22  1.0-r16  Sauce Labs <help@saucelabs.com>
+
+    * Added --debug-ssh option.
+
+2010-09-21  1.0-r15  Sauce Labs <help@saucelabs.com>
+
+    * Sauce Tunnel is now Sauce Connect!
+    * More SSH environment checks.
+    * Guarantee first SSH port health check runs early.
+    * Log some extra debug info to the debug log.
+
+2010-09-01  1.0-build14  Sauce Labs <help@saucelabs.com>
+
+    * More reliable and more efficient REST auth.
+    * Minor fix for uncaught exception.
+
+2010-07-31  1.0-build13  Sauce Labs <help@saucelabs.com>
+
+    * Fixed stdout issue on OpenBSD.
+    * Made ssh-keygen processes exit after they run.
+
+2010-07-30  1.0-build12  Sauce Labs <help@saucelabs.com>
+
+    * Fixed error occuring under Python 2.5.
+    * Include Python version in metadata.
+
+2010-07-30  1.0-build11  Sauce Labs <help@saucelabs.com>
+
+    * Added --readyfile option.
+
+2010-07-29  1.0-build10  Sauce Labs <help@saucelabs.com>
+
+    * Fix to expect script to work on OpenBSD.
+    * Always log debug messages to file. Removed --debug option.
+    * Clarify booting of the tunnel host.
+
+2010-07-23  1.0-build9  Sauce Labs <help@saucelabs.com>
+
+    * Check for ssh and expect on startup.
+
+2010-07-22  1.0-build8  Sauce Labs <help@saucelabs.com>
+
+    * Fix Traceback when no domains given.
+    * Re-add simplejson library into the unix directory.
+
+2010-07-19  1.0-build7  Sauce Labs <help@saucelabs.com>
+
+    * Check that domains don't contain '/' (e.g., URL used).
+
+2010-07-16  1.0-build6  Sauce Labs <help@saucelabs.com>
+
+    * Added README for unix regarding the dependency on Expect.
+    * Stripped SSH error output before printing in DEBUG mode.
+
+2010-07-16  1.0-build5  Sauce Labs <help@saucelabs.com>
+
+    * Exit with code 1 on errors.
+    * In debug mode, log options.
+    * Added brief windows README.
