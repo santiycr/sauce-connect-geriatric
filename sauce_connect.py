@@ -288,7 +288,7 @@ class HealthChecker(object):
 
     latency_log = LATENCY_LOG
 
-    def __init__(self, host, ports, fail_msg=None):
+    def __init__(self, host, ports, fail_msg=None, halt_on_fail=True):
         """fail_msg can include '%(host)s' and '%(port)d'"""
         self.host = host
         self.fail_msg = fail_msg
@@ -298,6 +298,7 @@ class HealthChecker(object):
         self.ports = frozenset(int(p) for p in ports)
         self.last_tcp_connect = defaultdict(time.time)
         self.last_tcp_ping = defaultdict(lambda: None)
+        self.halt_on_fail = halt_on_fail
 
     def _tcp_ping(self, port):
         with closing(socket.socket()) as sock:
@@ -344,7 +345,8 @@ class HealthChecker(object):
             all_good = False
             self.last_tcp_ping[port] = ping_time
             logger.warning(self.fail_msg % dict(host=self.host, port=port))
-            if now - self.last_tcp_connect[port] > HEALTH_CHECK_FAIL:
+            if (self.halt_on_fail and
+                now - self.last_tcp_connect[port] > HEALTH_CHECK_FAIL):
                 raise HealthCheckFail(
                     "Could not connect to %s:%s for over %s seconds"
                     % (self.host, port, HEALTH_CHECK_FAIL))
@@ -358,7 +360,7 @@ class ReverseSSHError(Exception):
 class ReverseSSH(object):
 
     def __init__(self, tunnel, host, ports, tunnel_ports, ssh_port,
-                 use_ssh_config=False, debug=False):
+                 use_ssh_config=False, debug=False, halt_on_fail=True):
         self.tunnel = tunnel
         self.host = host
         self.ports = ports
@@ -371,6 +373,7 @@ class ReverseSSH(object):
         self.readyfile = None
         self.stdout_f = None
         self.stderr_f = None
+        self.halt_on_fail = halt_on_fail
 
         if self.debug:
             logger.debug("ReverseSSH debugging is on.")
@@ -431,8 +434,6 @@ class ReverseSSH(object):
         else:
             self.stdout_f = open(os.devnull, 'wb')
         self.stderr_f = tempfile.TemporaryFile()
-        print self.stdout_f
-        print self.stderr_f
         self.proc = subprocess.Popen(
             cmd, shell=True, stdout=self.stdout_f, stderr=self.stderr_f)
         self.tunnel.reverse_ssh = self  # BUG: circular ref
@@ -442,7 +443,7 @@ class ReverseSSH(object):
         announced_running = False
 
         # setup recurring healthchecks
-        forwarded_health = HealthChecker(self.host, self.ports)
+        forwarded_health = HealthChecker(self.host, self.ports, halt_on_fail=self.halt_on_fail)
         tunnel_health = HealthChecker(host=self.tunnel.host, ports=[self.ssh_port],
             fail_msg="!! Your tests may fail because your network can not get "
                      "to the tunnel host (%s:%d)." % (self.tunnel.host, self.ssh_port))
@@ -489,12 +490,11 @@ class ReverseSSH(object):
                 logger.debug("ReverseSSH stderr was:\n%s\n" % reverse_ssh_stderr)
 
         if not self.stdout_f.closed:
-            self.stdout_f.seek(0)
-            reverse_ssh_stdout = self.stdout_f.read().strip()
-            self.stdout_f.close()
-
             if self.debug:
+                self.stdout_f.seek(0)
+                reverse_ssh_stdout = self.stdout_f.read().strip()
                 logger.debug("ReverseSSH stdout was:\n%s\n" % reverse_ssh_stdout)
+            self.stdout_f.close()
 
     def _rm_readyfile(self):
         if self.readyfile and os.path.exists(self.readyfile):
@@ -718,6 +718,9 @@ Performance tip:
              " By default, we use the same ports as the HOST."
              " If you know for sure _all_ your tests use something like"
              " http://site.test:8080/ then set this 8080.")
+    og.add_option("--dont-halt", action="store_false", default=True,
+                  dest="halt_on_fail",
+                  help="Don't halt the tunnel when the health check fails")
     og.add_option("--logfile", default=logfile,
           help="Path of the logfile to write to. [%default]")
     og.add_option("--readyfile",
@@ -918,7 +921,8 @@ def run(options, dependency_versions=None,
                      ports=options.ports, tunnel_ports=options.tunnel_ports,
                      ssh_port=options.ssh_port,
                      use_ssh_config=options.use_ssh_config,
-                     debug=options.debug_ssh)
+                     debug=options.debug_ssh,
+                     halt_on_fail=options.halt_on_fail)
     try:
         ssh.run(options.readyfile)
     except (ReverseSSHError, TunnelMachineError), e:
